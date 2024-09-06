@@ -11,6 +11,7 @@ import (
 	"golang.org/x/time/rate"
 )
 
+// RoomData represents the structure of the data we return
 type RoomData struct {
 	OccupancyRate    float64 `json:"occupancy_rate"`
 	AverageNightRate float64 `json:"average_night_rate"`
@@ -18,6 +19,7 @@ type RoomData struct {
 	LowestNightRate  float64 `json:"lowest_night_rate"`
 }
 
+// getRoomData mocks the data retrieval for the example
 func getRoomData(roomID string) (*RoomData, error) {
 	return &RoomData{
 		OccupancyRate:    85.5,
@@ -27,6 +29,7 @@ func getRoomData(roomID string) (*RoomData, error) {
 	}, nil
 }
 
+// roomDataHandler handles requests to get room data
 func roomDataHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	roomID := vars["roomID"]
@@ -58,11 +61,8 @@ func rateLimitMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func main() {
-	r := mux.NewRouter()
+// Exported function that Vercel will call
+func HandleRequest(w http.ResponseWriter, r *http.Request) {
 	r.Use(rateLimitMiddleware)
 	r.HandleFunc("/api/room/{roomID:[0-9]+}", roomDataHandler).Methods("GET")
-
-	fmt.Println("Starting server on :8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
 }
