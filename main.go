@@ -1,9 +1,7 @@
-package main
+package handler
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -21,6 +19,7 @@ type RoomData struct {
 
 // getRoomData mocks the data retrieval for the example
 func getRoomData(roomID string) (*RoomData, error) {
+	// Mocked data for demonstration purposes
 	return &RoomData{
 		OccupancyRate:    85.5,
 		AverageNightRate: 120.00,
@@ -49,9 +48,9 @@ func roomDataHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
-var limiter = rate.NewLimiter(rate.Every(time.Minute), 5)
-
+// rateLimitMiddleware limits the rate of requests
 func rateLimitMiddleware(next http.Handler) http.Handler {
+	limiter := rate.NewLimiter(rate.Every(time.Minute), 5)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !limiter.Allow() {
 			http.Error(w, "Too Many Requests", http.StatusTooManyRequests)
@@ -61,8 +60,16 @@ func rateLimitMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// Exported function that Vercel will call
-func HandleRequest(w http.ResponseWriter, r *http.Request) {
+// CreateRouter sets up the routes and middleware
+func CreateRouter() *mux.Router {
+	r := mux.NewRouter()
 	r.Use(rateLimitMiddleware)
 	r.HandleFunc("/api/room/{roomID:[0-9]+}", roomDataHandler).Methods("GET")
+	return r
+}
+
+// Entry point for Vercel
+func HandleRequest(w http.ResponseWriter, r *http.Request) {
+	router := CreateRouter()
+	router.ServeHTTP(w, r)
 }
