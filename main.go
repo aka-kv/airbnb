@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+	"math/rand"
 
 	"github.com/gorilla/mux"
 	"golang.org/x/time/rate"
@@ -16,14 +17,18 @@ type RoomData struct {
 	LowestNightRate  float64 `json:"lowest_night_rate"`
 }
 
-// getRoomData generates room data
+// Initialize random seed
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+// getRoomData generates random room data
 func getRoomData(roomID string) (*RoomData, error) {
-	// You can modify this function to generate random values if needed
 	return &RoomData{
-		OccupancyRate:    82.5,
-		AverageNightRate: 120.00,
-		HighestNightRate: 200.00,
-		LowestNightRate:  90.00,
+		OccupancyRate:    rand.Float64() * 100, // Random percentage between 0 and 100
+		AverageNightRate: rand.Float64() * 150 + 50, // Random amount between 50 and 200
+		HighestNightRate: rand.Float64() * 150 + 50, // Random amount between 50 and 200
+		LowestNightRate:  rand.Float64() * 150 + 50, // Random amount between 50 and 200
 	}, nil
 }
 
