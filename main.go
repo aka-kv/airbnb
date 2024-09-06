@@ -9,7 +9,6 @@ import (
 	"golang.org/x/time/rate"
 )
 
-// RoomData represents the structure of the data we return
 type RoomData struct {
 	OccupancyRate    float64 `json:"occupancy_rate"`
 	AverageNightRate float64 `json:"average_night_rate"`
@@ -17,9 +16,7 @@ type RoomData struct {
 	LowestNightRate  float64 `json:"lowest_night_rate"`
 }
 
-// getRoomData mocks the data retrieval for the example
 func getRoomData(roomID string) (*RoomData, error) {
-	// Mocked data for demonstration purposes
 	return &RoomData{
 		OccupancyRate:    85.5,
 		AverageNightRate: 120.00,
@@ -28,7 +25,6 @@ func getRoomData(roomID string) (*RoomData, error) {
 	}, nil
 }
 
-// roomDataHandler handles requests to get room data
 func roomDataHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	roomID := vars["roomID"]
@@ -48,7 +44,6 @@ func roomDataHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
-// rateLimitMiddleware limits the rate of requests
 func rateLimitMiddleware(next http.Handler) http.Handler {
 	limiter := rate.NewLimiter(rate.Every(time.Minute), 5)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +55,6 @@ func rateLimitMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// CreateRouter sets up the routes and middleware
 func CreateRouter() *mux.Router {
 	r := mux.NewRouter()
 	r.Use(rateLimitMiddleware)
@@ -68,7 +62,6 @@ func CreateRouter() *mux.Router {
 	return r
 }
 
-// Entry point for Vercel
 func HandleRequest(w http.ResponseWriter, r *http.Request) {
 	router := CreateRouter()
 	router.ServeHTTP(w, r)
