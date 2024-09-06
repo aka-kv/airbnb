@@ -21,7 +21,7 @@ type RoomData struct {
 func getRoomData(roomID string) (*RoomData, error) {
 	// Mocked data for demonstration purposes
 	return &RoomData{
-		OccupancyRate:    85.5,
+		OccupancyRate:    82.5,
 		AverageNightRate: 120.00,
 		HighestNightRate: 200.00,
 		LowestNightRate:  90.00,
