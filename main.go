@@ -16,7 +16,9 @@ type RoomData struct {
 	LowestNightRate  float64 `json:"lowest_night_rate"`
 }
 
+// getRoomData generates room data
 func getRoomData(roomID string) (*RoomData, error) {
+	// You can modify this function to generate random values if needed
 	return &RoomData{
 		OccupancyRate:    82.5,
 		AverageNightRate: 120.00,
